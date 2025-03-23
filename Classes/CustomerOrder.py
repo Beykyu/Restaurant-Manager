@@ -52,7 +52,7 @@ class CustomerOrder:
         # Additional validation
         if order_id is not None and not isinstance(order_id, int):
             raise TypeError("order_id must be a int or None")
-        if date_time is not isinstance(date_time, datetime):
+        if not isinstance(date_time, datetime):
             raise TypeError("date_time must be a datetime object")
         if menu_items:
             if not all(isinstance(item, MenuItemOrder) for item in menu_items):
