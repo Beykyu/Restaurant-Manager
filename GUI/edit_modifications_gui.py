@@ -26,14 +26,6 @@ class EditModsGUI():
         
         self.update_listbox()
 
-    def get_modifications(self) -> list[tuple]:
-        """
-        Retrieves all the modifications from the database
-        Returns:
-             list[tuple]: A list of tuples that contains the name, cost and tag of each modification in the database
-        """
-        pass
-
     #TODO Fix bug where dropdown not displaying menu correctly
     def add_mod(self) -> None:
         """
