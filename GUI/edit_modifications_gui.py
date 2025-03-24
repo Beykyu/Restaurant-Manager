@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox, simpledialog
 import json
-from gui_functions import add_mod_to_database, get_mod_from_tag
+from gui_functions import add_mod_to_database, get_mod_from_tag, remove_mod
 
 class EditModsGUI():
 
@@ -88,7 +88,17 @@ class EditModsGUI():
         """
         Remove the modification from the database.
         """
-        pass
+        selected_index = self.listbox.curselection()
+        if selected_index:
+            mod_to_remove = self.listbox.get(selected_index)
+            if remove_mod(mod_to_remove[0]):
+                messagebox.showinfo("Success!", "Modification successfully removed")
+            else:
+                messagebox.showerror("Error", "Could not remove the selected modification")
+            self.update_listbox()
+        else:
+            messagebox.showwarning("Warning", "No mod selected!")
+
 
     def update_listbox(self):
         """

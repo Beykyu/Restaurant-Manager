@@ -448,7 +448,25 @@ def remove_mod(mod : str) -> bool:
         
     Returns:
         bool : True if successfully removed, False if there was an error deleting modification"""
-    pass
+    db = db_connection.create_connection()
+    if db:
+        try:
+            cursor = db.cursor()
+            query = """
+                    DELETE FROM modifications
+                    WHERE modification_name = %s"""
+            cursor.execute(query,(mod))
+            db.commit()
+            return True
+        # Ensure database changes are rolled back if an error
+        except Exception as e:
+            print(f"Error occurred: {e}")
+            db.rollback()  
+            return False 
+        finally:
+            db.close()
+    else:
+        raise ConnectionError("Failed to establish database connection.")
 
 def get_past_order(date: str) -> list:
     """Get past orders from the database.
