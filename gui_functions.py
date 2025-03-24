@@ -373,7 +373,7 @@ def get_mod_from_tag(tag: str) -> list:
     """Get modifications info associated with a specific tag/grouping.
 
     Args:
-        tag (str): Group that the modification belongs to
+        tag (str): Group that the modification belongs to, if it's * get all entries on table
 
     Returns:
         list: List of tuples containing modification details
@@ -386,12 +386,19 @@ def get_mod_from_tag(tag: str) -> list:
     if db:
         try:
             cursor = db.cursor()
-            query = """
-                    SELECT modification_name, additional_cost
-                    FROM modifications
-                    WHERE tag_name = %s
-                    """
-            cursor.execute(query, tag)
+            if (tag == "*"):
+                query = """
+                        SELECT modification_name,additional_cost, tag_name 
+                        FROM modifications
+                        """
+                cursor.execute(query)
+            else:    
+                query = """
+                        SELECT modification_name, additional_cost
+                        FROM modifications
+                        WHERE tag_name = %s
+                        """
+                cursor.execute(query, tag)
             row = cursor.fetchall()
             return row 
         except Exception as e:

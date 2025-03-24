@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox, simpledialog
 import json
-from gui_functions import add_mod_to_database
+from gui_functions import add_mod_to_database, get_mod_from_tag
 
 class EditModsGUI():
 
@@ -14,9 +14,6 @@ class EditModsGUI():
         self.listbox = tk.Listbox(root, selectmode=tk.SINGLE, width=40, height=15)
         self.listbox.pack(pady=10)
 
-        # Add existing tags to the listbox
-        self.update_listbox()
-
         # Buttons
         self.add_button = tk.Button(root, text="Add modification", command=self.add_mod)
         self.add_button.pack(pady=5)
@@ -26,15 +23,8 @@ class EditModsGUI():
 
         self.save_button = tk.Button(root, text="Go back", command=self.owner_gui_return)
         self.save_button.pack(pady=5)
-
-    def get_tags(self) -> set[tuple]:
-        """
-        Retrieves the currently saved tags.
-        Returns:
-            tags(set[str]): A set of all tags currently on file.
-        """
-        pass
-
+        
+        self.update_listbox()
 
     def get_modifications(self) -> list[tuple]:
         """
@@ -54,14 +44,26 @@ class EditModsGUI():
             name = name_entry.get()
             cost = number_entry.get()
             tag = selected_tag_var.get()
-            if name and cost and tag:
-                if add_mod_to_database(name, cost, tag) :
-                    messagebox.showinfo("Success", "Modification added successfully")
-                    popup.destroy()
-            else:
-                messagebox.showwarning("Warning", "Please fill in all the fields.")
 
-        # Create the popup window
+            # Validate inputs
+            if not name or not tag:
+                messagebox.showwarning("Warning", "Please fill in all the fields and try again.")
+                return
+
+            try:
+                cost = float(cost)  # Convert cost to a float
+            except ValueError:
+                messagebox.showwarning("Warning", "Please make sure the cost is a valid number.")
+                return
+
+            # Add modification to the database
+            if add_mod_to_database(name, cost, tag):
+                messagebox.showinfo("Success", "Modification added successfully.")
+                self.update_listbox()
+                popup.destroy()
+            else:
+                messagebox.showwarning("Warning", "Failed to add modification. Please try again.")
+
         popup = tk.Tk()
         popup.title("Enter Modification name and Cost")
 
@@ -86,10 +88,8 @@ class EditModsGUI():
         dropdown = tk.OptionMenu(popup, selected_tag_var, *tags)
         dropdown.grid(row=2, column=1, padx=10, pady=10)
 
-        # Add a submit button
         tk.Button(popup, text="Submit", command=submit).grid(row=2, column=2, columnspan=2, pady=10)
 
-        # Run the popup window
         popup.mainloop()
 
     def remove_mod(self):
@@ -102,7 +102,10 @@ class EditModsGUI():
         """
         Refresh the listbox to display the current mods.
         """
-        pass
+        self.mods = get_mod_from_tag("*")
+        self.listbox.delete(0, tk.END)
+        for mod in sorted(self.mods):  # Sorting tags for consistent display
+            self.listbox.insert(tk.END, mod)
 
     def owner_gui_return(self):
         """Return to the owner GUI screen."""
