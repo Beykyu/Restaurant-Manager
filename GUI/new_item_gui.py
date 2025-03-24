@@ -136,6 +136,8 @@ class New_Item:
         def confirm_add():
             """Adds the menu item details to the menu database"""
             try:
+                if not self.selected_tags:
+                    self.selected_tags = ["None"]
                 add_item_to_database(
                     self.menu_no_entry.get(),
                     self.menu_name_entry.get(),
