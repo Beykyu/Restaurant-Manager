@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 from tkinter import messagebox, simpledialog
 import json
 from gui_functions import add_mod_to_database, get_mod_from_tag, remove_mod
@@ -70,16 +71,23 @@ class EditModsGUI():
 
         # Dropdown for tags
         tk.Label(popup, text="Tag:").grid(row=2, column=0, padx=10, pady=10)
+
         try:
             with open('MISC/mod_tags.json', 'r') as file:
                 data = json.load(file)
             tags = data.get("tags", [""])  # Fallback to an empty list if "tags" is missing
         except (FileNotFoundError, json.JSONDecodeError) as e:
             print(f"Error loading tags.json: {e}")
-        selected_tag_var = tk.StringVar(value=tags[0])
-        dropdown = tk.OptionMenu(popup, selected_tag_var, *tags)
-        dropdown.grid(row=2, column=1, padx=10, pady=10)
 
+        # Handle default value for tags
+        selected_tag_var = tk.StringVar(value=tags[0] if tags else "Select a Tag")
+
+        # Combobox for tags
+        combobox = ttk.Combobox(popup, textvariable=selected_tag_var, values=tags, state="readonly")  # Read-only so users can only pick options
+        combobox.grid(row=2, column=1, padx=10, pady=10)
+        combobox.current(0)  # Set the default selection to the first tag
+
+        # Submit button
         tk.Button(popup, text="Submit", command=submit).grid(row=2, column=2, columnspan=2, pady=10)
 
         popup.mainloop()
