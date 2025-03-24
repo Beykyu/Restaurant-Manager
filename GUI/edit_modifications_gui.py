@@ -50,7 +50,7 @@ class EditModsGUI():
 
             # Add modification to the database
             if add_mod_to_database(name, cost, tag):
-                messagebox.showinfo("Success", "Modification added successfully.")
+                messagebox.showinfo("Success", f"{name} added successfully.")
                 self.update_listbox()
                 popup.destroy()
             else:
@@ -89,10 +89,12 @@ class EditModsGUI():
         Remove the modification from the database.
         """
         selected_index = self.listbox.curselection()
+        sorted_mods = sorted(self.mods) #Need to create a sorted list of mods otherwise index will be incorrect
+
         if selected_index:
-            mod_to_remove = self.listbox.get(selected_index)
-            if remove_mod(mod_to_remove[0]):
-                messagebox.showinfo("Success!", "Modification successfully removed")
+            mod_to_remove = sorted_mods[selected_index[0]][0]
+            if remove_mod(mod_to_remove):
+                messagebox.showinfo("Success!", f"{mod_to_remove} successfully removed")
             else:
                 messagebox.showerror("Error", "Could not remove the selected modification")
             self.update_listbox()
@@ -107,7 +109,9 @@ class EditModsGUI():
         self.mods = get_mod_from_tag("*")
         self.listbox.delete(0, tk.END)
         for mod in sorted(self.mods):  # Sorting tags for consistent display
-            self.listbox.insert(tk.END, mod)
+            cleaned_mod = (mod[0].strip("{}"), *mod[1:])
+            display_text = f"{cleaned_mod[0]} {mod[1]} {mod[2]}" 
+            self.listbox.insert(tk.END, display_text)
 
     def owner_gui_return(self):
         """Return to the owner GUI screen."""

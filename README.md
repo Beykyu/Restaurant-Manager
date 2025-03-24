@@ -19,6 +19,7 @@ This project is currently in active development, with core features implemented 
   - Dynamic tag system for food categorization
   - Price and item modification tracking
   - Custom modifications support for menu items
+  - Editing Tag and modifications
 
 - **Order Processing**
   - Real-time order creation and modification
@@ -32,7 +33,6 @@ This project is currently in active development, with core features implemented 
   - Permission-based feature access
 
 ### Planned Features:
-- Editing Tag and modifications
 - Enhanced reporting and analytics
 - Inventory management system
 - Table management
