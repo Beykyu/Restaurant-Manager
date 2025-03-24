@@ -71,6 +71,7 @@ class Owner_Gui:
         Button(buttons_frame, text="Add User", command=self.add_new_user).pack(side=LEFT, padx=5) 
         Button(buttons_frame, text="Logout", command=self.logout).pack(side=LEFT, padx=5)
         Button(buttons_frame, text="View Past Orders", command=self.view_past_orders).pack(side=LEFT, padx=5)
+        Button(buttons_frame, text="Edit Tags", command=self.edit_tags).pack(side=LEFT, padx=5)
 
     def _setup_tags_frame(self):
         """Create the tags listbox and its controls."""
@@ -214,3 +215,8 @@ class Owner_Gui:
         """Navigate to the Past Orders screen."""
         self.root.withdraw()
         self.window_manager.show_past_orders_screen()
+
+    def edit_tags(self):
+        """Navigate to the Tag editing screen."""
+        self.root.withdraw()
+        self.window_manager.show_edit_tags_screen()

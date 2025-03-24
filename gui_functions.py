@@ -461,3 +461,52 @@ def get_past_order_items(order_id: int) -> list:
             db.close()
     else:
         raise ConnectionError("Failed to establish database connection.")
+    
+def remove_menu_item_tags(tags_to_remove: set[str]) -> bool:
+    """
+    Removes a set of tags from all menu items in the database.
+
+    Args:
+        tags_to_remove (set[str]): A set of tags to be removed from menu items.
+
+    Returns:
+        bool: True if the operation is successful, False otherwise.
+    """
+    db = db_connection.create_connection()
+    if db:
+        try:
+            cursor = db.cursor()
+
+            # Retrieve all menu items with their tags
+            query = "SELECT menuNo, tags FROM menu"
+            cursor.execute(query)
+            rows = cursor.fetchall()
+
+            for row in rows:
+                entry_id = row[0]
+                tags = json.loads(row[1])  # Parse JSON tags into a Python list
+
+                # Remove the specified tags
+                updated_tags = [tag for tag in tags if tag not in tags_to_remove]
+
+                # Handle empty tags by adding "None"
+                if not updated_tags:
+                    updated_tags = ["None"]
+
+                # Update the database with the modified tags
+                update_query = "UPDATE menu SET tags = %s WHERE menuNo = %s"
+                cursor.execute(update_query, (json.dumps(updated_tags), entry_id))
+
+            db.commit()
+            return True
+
+        except Exception as e:
+            db.rollback()  # Undo changes in case of an error
+            print(f"Error: {e}")
+            return False
+
+        finally:
+            db.close()
+    else:
+        raise ConnectionError("Failed to establish database connection.")
+        

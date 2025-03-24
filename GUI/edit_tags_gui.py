@@ -1,13 +1,16 @@
 import tkinter as tk
 from tkinter import messagebox, simpledialog
 import json
+from gui_functions import remove_menu_item_tags
 
 class EditTagsGUI():
 
-    def __init__(self, root):
+    def __init__(self, root, window_manager):
         self.root = root
+        self.window_manager = window_manager
         self.root.title("Tag Editor")
         self.tags = set(self.get_tags())  # Using a set to store tags
+        self.tags_to_remove = set() # Holds a set of tags to be removed from the database
 
         # Create GUI elements
         self.listbox = tk.Listbox(root, selectmode=tk.SINGLE, width=40, height=15)
@@ -24,6 +27,9 @@ class EditTagsGUI():
         self.remove_button.pack(pady=5)
 
         self.save_button = tk.Button(root, text="Save Tags", command=self.save_tags)
+        self.save_button.pack(pady=5)
+
+        self.save_button = tk.Button(root, text="Go back", command=self.owner_gui_return)
         self.save_button.pack(pady=5)
 
     def get_tags(self) -> set[str]:
@@ -48,7 +54,8 @@ class EditTagsGUI():
             with open('MISC/tags.json', 'w') as file:
                 data = {"tags": list(self.tags)}  # Convert set to list for JSON serialization
                 json.dump(data, file)
-            messagebox.showinfo("Success", "Tags saved successfully!")
+            self.update_tags_in_database(self.tags_to_remove)
+            #messagebox.showinfo("Success", "Tags saved successfully!")
         except IOError as e:
             messagebox.showerror("Error", f"An error occurred while saving: {e}")
 
@@ -58,7 +65,11 @@ class EditTagsGUI():
         Args:
             tags (set[str]): A set of tags that are to be removed from the file
         """
-        pass
+        if remove_menu_item_tags(tags):
+            messagebox.showinfo("Success", "Tags successfully changed")
+        else:
+            messagebox.showerror("Error", "Tags could not be updated")
+        
 
     def add_tag(self):
         """
@@ -66,7 +77,8 @@ class EditTagsGUI():
         """
         new_tag = simpledialog.askstring("Add Tag", "Enter new tag:")
         if new_tag:
-            self.tags.add(new_tag)  # Automatically handles duplicates
+            self.tags.add(new_tag)
+            self.tags_to_remove.discard(new_tag) # Stops newly added tag from being accidently deleted from database
             self.update_listbox()
 
     def remove_tag(self):
@@ -76,7 +88,8 @@ class EditTagsGUI():
         selected_index = self.listbox.curselection()
         if selected_index:
             tag_to_remove = self.listbox.get(selected_index)
-            self.tags.discard(tag_to_remove)  # Remove the tag from the set
+            self.tags_to_remove.add(tag_to_remove) # Adds tag to set that stores tags that need to be removed from database
+            self.tags.discard(tag_to_remove)  # Remove the tag current tags list
             self.update_listbox()
         else:
             messagebox.showwarning("Warning", "No tag selected!")
@@ -89,6 +102,10 @@ class EditTagsGUI():
         for tag in sorted(self.tags):  # Sorting tags for consistent display
             self.listbox.insert(tk.END, tag)
 
+    def owner_gui_return(self):
+        """Return to the owner GUI screen."""
+        self.root.destroy()
+        self.window_manager.show_owner_screen()
 
 if __name__ == "__main__":
     root = tk.Tk()

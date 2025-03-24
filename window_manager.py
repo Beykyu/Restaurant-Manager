@@ -6,6 +6,7 @@ from GUI.add_users_gui import AddUserGUI
 from GUI.manage_users_gui import ManageUsersGUI
 from GUI.employee_gui import EmployeeGui
 from GUI.view_past_order_gui import PastOrdersGUI
+from GUI.edit_tags_gui import EditTagsGUI
 
 class WindowManager:
     def __init__(self):
@@ -52,6 +53,11 @@ class WindowManager:
         new_window = Toplevel(self.root)
         PastOrdersGUI(new_window, self)
 
+    def show_edit_tags_screen(self):
+        self.root.withdraw()
+        new_window = Toplevel(self.root)
+        EditTagsGUI(new_window, self)
+        
 if __name__ == "__main__":
     app = WindowManager()
     app.run()
