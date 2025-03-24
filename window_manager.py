@@ -7,6 +7,7 @@ from GUI.manage_users_gui import ManageUsersGUI
 from GUI.employee_gui import EmployeeGui
 from GUI.view_past_order_gui import PastOrdersGUI
 from GUI.edit_tags_gui import EditTagsGUI
+from GUI.edit_modifications_gui import EditModsGUI
 
 class WindowManager:
     def __init__(self):
@@ -57,7 +58,12 @@ class WindowManager:
         self.root.withdraw()
         new_window = Toplevel(self.root)
         EditTagsGUI(new_window, self)
-        
+
+    def show_mod_screen(self):
+        self.root.withdraw()
+        new_window = Toplevel(self.root)
+        EditModsGUI(new_window, self)
+
 if __name__ == "__main__":
     app = WindowManager()
     app.run()

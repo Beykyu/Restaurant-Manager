@@ -401,6 +401,48 @@ def get_mod_from_tag(tag: str) -> list:
     else:
         raise ConnectionError("Failed to establish database connection.")
     
+def add_mod_to_database(name : str, cost : float, tag : str) -> bool:
+    """
+    Adds a menu item modification to database along with an additional costs it may have
+    
+    Args:
+        name (str): The name of the modification
+        cost (float): The additional cost of adding the modification to a menu item
+        tag (str): The group of ingredients that the modification belongs to
+        
+    Returns:
+        bool : True if successful, False if there was an error adding modification"""
+    db = db_connection.create_connection()
+    if db:
+        try:
+            cursor = db.cursor()
+            query = """
+                    INSERT INTO modifications(modification_name, additional_cost, tag_name)
+                    VALUES (%s, %s, %s)"""
+            cursor.execute(query,(name, cost, tag))
+            db.commit()
+            return True
+        # Ensure database changes are rolled back if an error
+        except Exception as e:
+            print(f"Error occurred: {e}")
+            db.rollback()  
+            return False 
+        finally:
+            db.close()
+    else:
+        raise ConnectionError("Failed to establish database connection.")
+    
+def remove_mod(mod : str) -> bool:
+    """
+    Removes a menu item modification to database along with an additional costs it may have
+    
+    Args:
+        mod (str) : The name of the modification to be removed from the database
+        
+    Returns:
+        bool : True if successfully removed, False if there was an error deleting modification"""
+    pass
+
 def get_past_order(date: str) -> list:
     """Get past orders from the database.
 
