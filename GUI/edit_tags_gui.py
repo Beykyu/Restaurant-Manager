@@ -55,7 +55,6 @@ class EditTagsGUI():
                 data = {"tags": list(self.tags)}  # Convert set to list for JSON serialization
                 json.dump(data, file)
             self.update_tags_in_database(self.tags_to_remove)
-            #messagebox.showinfo("Success", "Tags saved successfully!")
         except IOError as e:
             messagebox.showerror("Error", f"An error occurred while saving: {e}")
 
@@ -69,7 +68,6 @@ class EditTagsGUI():
             messagebox.showinfo("Success", "Tags successfully changed")
         else:
             messagebox.showerror("Error", "Tags could not be updated")
-        
 
     def add_tag(self):
         """
@@ -106,8 +104,3 @@ class EditTagsGUI():
         """Return to the owner GUI screen."""
         self.root.destroy()
         self.window_manager.show_owner_screen()
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    gui = EditTagsGUI(root)
-    root.mainloop()
